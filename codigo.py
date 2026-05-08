@@ -15,28 +15,20 @@ total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 print(total_frames)
 # Leer frame q quiero
 
+#desde el 586 hasta el 694 oscuridad a luz
+#desde 1275 hasta 1599 luz a oscuridad
 
 
-cap = cv2.VideoCapture("video.MOV")
-total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+ret, frame = cap.read()
 
-def on_trackbar(pos):
-    cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
-    ret, frame = cap.read()
-    if ret:
-        cv2.putText(frame, f"Frame: {pos}/{total_frames-1}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.imshow("Video", frame)
+if ret:
+    cv2.imshow (f"mostrando el frame {frame_deseado}", frame)
+    print("tocar tecla para terminar ventana")
+    print(f"mostrando frame:{frame_deseado}")
+    cv2.waitKey(0); #espera a que se presione una tecla
+else:
+    print ("no se pudio loko")
 
-cv2.namedWindow("Video")
-cv2.createTrackbar("Frame", "Video", 0, total_frames - 1, on_trackbar)
-
-# Mostrar el primer frame
-on_trackbar(0)
-
-while True:
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
+# Liberar recursos
 cap.release()
 cv2.destroyAllWindows()

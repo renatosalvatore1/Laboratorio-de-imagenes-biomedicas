@@ -7,9 +7,11 @@ def on_trackbar(pos):
     cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
     ret, frame = cap.read()
     if ret:
+        
         cv2.putText(frame, f"Frame: {pos}/{total_frames-1}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         cv2.imshow("Video", frame)
+        cv2.waitKey(0); #espera a que se presione una tecla
 
 cv2.namedWindow("Video")
 cv2.createTrackbar("Frame", "Video", 0, total_frames - 1, on_trackbar)
