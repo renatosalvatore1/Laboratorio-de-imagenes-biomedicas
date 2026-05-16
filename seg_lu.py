@@ -4,51 +4,51 @@ import numpy as np
 video_path = "C:/Users/valle/Documents/Laboratorio-de-imagenes-biomedicas/IMG_2721.mov"
 capt = cv2.VideoCapture(video_path)
 
-'''trabajo con bloques de frames (586,694) para oscuridad a luz y (1275,1599) para luz a oscuridad'''
+if not capt.isOpened():
+    print("No se encuentra el archivo o el codec no es compatible.")
+    exit()
 
-def bloques(inicio, final, cap, nombre_ventana): 
-    if not cap.isOpened():
-        print("No se encuentra el archivo o el codec no es compatible.")
-    else:
-        cap.set(cv2.CAP_PROP_POS_FRAMES, inicio)
+bloques = [
+    (586, 694, "Oscuridad a luz"),
+    (1275, 1599, "Luz a oscuridad")
+]
+
+bloque = 0
+frame = 0
+
+capt.set(cv2.CAP_PROP_POS_FRAMES, bloques[bloque][0])
+current_frame = bloques[bloque][0]
+
+while bloque < len(bloques):
+    inicio, final, nombre_ventana = bloques[bloque]
+
+    ret, frame = capt.read()
+    if not ret:
+        break  #fin del video
+    
+    if inicio <= current_frame <= final: #si el frame actual está dentro del bloque de interés, lo procesamos
+       
+        crop = frame[180:420,330:600]
+        gris = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        filtro = cv2.medianBlur(gris, 5)
+        umbral, segmentada = cv2.threshold(filtro,0,255,cv2.THRESH_BINARY +cv2.THRESH_OTSU)
+        cv2.imshow(nombre_ventana, segmentada)
         
-        while True:
-            current_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-            ret, frame = cap.read()
+        if cv2.waitKey(1) & 0xFF == ord('q'): #Para salir presionar 'q'
+            break
             
-            if not ret or current_frame > final: #salimos si el video termina o se pasa del rango
-                break
-                
-            gris = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            filtro = cv2.medianBlur(gris, 5)
-            
-            #'''acá empieza k-means
+        frame += 1
+    
+    elif frame > final: #se salta al siguiente bloque
+        bloque += 1
+        if bloque < len(bloques):
+            nuevo_inicio = bloques[bloque][0]
+            capt.set(cv2.CAP_PROP_POS_FRAMES, nuevo_inicio)
+            frame = nuevo_inicio
+            cv2.destroyWindow(nombre_ventana) #se cierra la ventana anterior
 
-            pixel_values = filtro.reshape((-1, 1))
-            pixel_values = np.float32(pixel_values)
-
-            criterios = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0) #Se detiene si se alcanza la precisión (0.2) o 10 iteraciones
-            K = 4
-
-            _, etiquetas, centros = cv2.kmeans(pixel_values, K, None, criterios, 10, cv2.KMEANS_RANDOM_CENTERS)
-            centros = np.uint8(centros)
-            segmentada_datos = centros[etiquetas.flatten()]
-            segmentada = segmentada_datos.reshape((filtro.shape))
-            cv2.imshow(nombre_ventana, segmentada)
-
-            #acá termina k-means'''
-            
-            #cv2.imshow(nombre_ventana, filtro) #esto es para ver solo las filtradas
-            
-            if cv2.waitKey(30) & 0xFF == ord('q'): #waitKey de 30ms
-                return True
-
-desde_oscuro=bloques(586,695,capt,"Oscuridad a luz")
-desde_luz=bloques(1275,1600,capt,"Luz a oscuridad")
 capt.release()
 cv2.destroyAllWindows()
-
-
 
 
 #machetito para el futuro
