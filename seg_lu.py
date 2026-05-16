@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-video_path = "C:/Users/valle/Documents/Laboratorio-de-imagenes-biomedicas/IMG_2721.mov"
+video_path = "IMG_2721.mov"
 capt = cv2.VideoCapture(video_path)
 
 if not capt.isOpened():
@@ -11,7 +11,7 @@ if not capt.isOpened():
 bloques = [
     (586, 694, "Oscuridad a luz"),
     (1275, 1599, "Luz a oscuridad")
-]git
+]
 
 bloque = 0
 frame = 0
