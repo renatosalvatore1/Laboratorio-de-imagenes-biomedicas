@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, QThread, Signal
 import pyqtgraph as pg
-import serial
+import serialp
 import serial.tools.list_ports
 
 # Subclase de QUiLoader que registra PlotWidget
