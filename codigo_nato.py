@@ -207,4 +207,5 @@ ax2.legend()
 ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
+#plt.savefig('grafico_pupila.png', dpi=300, bbox_inches='tight')
 plt.show()
